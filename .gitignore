@@ -3,6 +3,25 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+.env
+
+### Secrets ###
+*.jks
+*.p12
+*.pem
+*.key
+
+### Logs ###
+logs/
+*.log
+
+### Docker ###
+.docker/
+docker-compose.override.yml
+
+### OS specific ###
+.DS_Store
+Thumbs.db
 
 ### STS ###
 .apt_generated
