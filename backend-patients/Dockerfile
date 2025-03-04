@@ -9,22 +9,25 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Customize JRE
-RUN jar xf target/backend-patients-*.jar && \
-	jdeps --ignore-missing-deps -q  \
-    	  --recursive  \
-		  --multi-release 21  \
-		  --print-module-deps  \
-		  --class-path 'BOOT-INF/lib/*'  \
-	  	  target/backend-patients-*.jar > deps.info && \
-    jlink --add-modules $(cat deps.info) \
-		  --strip-debug \
-		  --compress zip-6 \
-		  --no-header-files \
-		  --no-man-pages \
-		  --output /custom-jre
+RUN jar xf target/backend-patients-*.jar
 
-# Small runtime image
-FROM debian:trixie-slim
+RUN jdeps --ignore-missing-deps -q  \
+    --recursive  \
+    --multi-release 21  \
+    --print-module-deps  \
+    --class-path 'BOOT-INF/lib/*'  \
+    target/backend-patients-*.jar > deps.info
+
+RUN jlink \
+    --add-modules $(cat deps.info) \
+    --strip-debug \
+    --compress 2 \
+    --no-header-files \
+    --no-man-pages \
+    --output /custom-jre
+
+# Create image
+FROM debian:bookworm-slim
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates && \

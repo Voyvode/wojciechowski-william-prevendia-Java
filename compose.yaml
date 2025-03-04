@@ -1,0 +1,142 @@
+services:
+
+  # ======================== DATABASES ========================
+
+  db-patients:
+    image: postgres:latest
+    container_name: prevendia-db-patients
+    environment:
+      POSTGRES_USER: prevendia
+      POSTGRES_PASSWORD: Prévendia_paSSw0rd_P4713N7S
+      POSTGRES_DB: patients
+    volumes:
+      - ./backend-patients/init-db/:/docker-entrypoint-initdb.d
+      - patients-data:/var/lib/postgresql/data
+    networks:
+      - prevendia-network
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "prevendia", "-d", "patients"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  db-notes:
+    image: mongo:latest
+    container_name: prevendia-db-notes
+    command: mongod --auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: prevendia
+      MONGO_INITDB_ROOT_PASSWORD: Prévendia_paSSw0rd_N073S
+      MONGO_INITDB_DATABASE: notes
+    volumes:
+      - ./backend-notes/init-db/:/docker-entrypoint-initdb.d/
+      - notes-data:/data/db
+    networks:
+      - prevendia-network
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ======================== BACKENDS ========================
+
+  backend-patients:
+    container_name: prevendia-backend-patients
+    build:
+      context: ./backend-patients
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_APPLICATION_NAME=prevendia-backend-patients
+      - SERVER_PORT=8081
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://prevendia-db-patients:5432/patients
+      - SPRING_DATASOURCE_USERNAME=prevendia
+      - SPRING_DATASOURCE_PASSWORD=Prévendia_paSSw0rd_P4713N7S
+    networks:
+      - prevendia-network
+    ports:
+      - "8081:8081"
+    depends_on:
+      db-patients:
+        condition: service_healthy
+
+  backend-notes:
+    container_name: prevendia-backend-notes
+    build:
+      context: ./backend-notes
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_APPLICATION_NAME=prevendia-backend-notes
+      - SERVER_PORT=8082
+      - SPRING_MONGODB_URI=mongodb://prevendia:Prévendia_paSSw0rd_N073S@db-notes:27017/notes
+      - SPRING_MONGODB_DATABASE=notes
+    networks:
+      - prevendia-network
+    ports:
+      - "8082:8082"
+    depends_on:
+      db-notes:
+        condition: service_healthy
+
+  backend-risk:
+    container_name: prevendia-backend-risk
+    build:
+      context: ./backend-risk
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_APPLICATION_NAME=prevendia-backend-risk
+      - BACKEND_PATIENTS_URL=http://backend-patients:8081
+      - BACKEND_NOTES_URL=http://backend-notes:8082
+      - SERVER_PORT=8083
+    networks:
+      - prevendia-network
+    ports:
+      - "8083:8083"
+
+  # ======================== GATEWAY ========================
+
+  gateway:
+    container_name: prevendia-gateway
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_APPLICATION_NAME=prevendia-gateway
+      - SERVER_PORT=8080
+    networks:
+      - prevendia-network
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend-patients
+      - backend-notes
+      - backend-risk
+
+  # ======================== FRONTEND ========================
+
+  frontend:
+    container_name: prevendia-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_APPLICATION_NAME=prevendia-frontend
+      - SERVER_PORT=8090
+    networks:
+      - prevendia-network
+    ports:
+      - "8090:8090"
+    depends_on:
+      - gateway
+
+volumes:
+  patients-data:
+  notes-data:
+
+networks:
+  prevendia-network:
+    driver: bridge
