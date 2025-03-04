@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mise à jour du patient ‑ Prévendia</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+</head>
+<body>
+<!-- Update Patient Modal -->
+<div class="modal fade" id="patientNotesModal" tabindex="-1" aria-labelledby="patientNotesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="patientNotesModalTitle">
+                    <span th:text="|${patient.firstname} ${patient.lastname}|"></span><br>
+                    <span class="small text-muted" th:text="|Notes de suivis|"></span>
+                </h5>
+                <div class="text-center">
+                    <span class="small text-muted">Risque de diabète</span><br>
+                    <div class="d-inline-block mt-1" th:switch="${risk.assessment}">
+                        <span th:case="'None'" class="badge bg-success" title="Aucun risque" th:text="${risk.assessment}">None</span>
+                        <span th:case="'Borderline'" class="badge bg-warning" title="Risque limite" th:text="${risk.assessment}">Borderline</span>
+                        <span th:case="'In danger'" class="badge bg-orange" style="background-color: #ff9800;" title="En danger" th:text="${risk.assessment}">In danger</span>
+                        <span th:case="'Early onset'" class="badge bg-danger" title="Début précoce" th:text="${risk.assessment}">Early onset</span>
+                        <span th:case="*" class="badge bg-secondary" th:text="${risk.assessment}">Unknown</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close p1" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="mb-3" th:each="note : ${notes}">
+                    <h5 class="form-label" th:text="${#temporals.format(note.date,'dd MMM yyyy')}"></h5>
+                    <p class="mt-1 p-2 bg-light rounded" th:text="${note.content}"></p>
+                </div>
+
+                <div class="text-end">
+                    <button type="button" id="toggle-note-btn" class="btn btn-primary">Nouvelle note</button>
+                </div>
+
+                <!-- Formulaire pour ajouter une nouvelle note (initialement caché) -->
+                <form th:action="@{/patients/{id}/notes/add (id=${patient.id})}" method="post" id="patientNotesForm" style="display: none">
+                    <!-- Hidden fields for required data -->
+                    <input type="hidden" name="patId" th:value="${patient.id}">
+                    <input type="hidden" name="patient" th:value="${patient.lastname}">
+
+                    <div class="mb-3">
+                        <label for="new-note" class="form-label">Nouvelle note</label>
+                        <input type="text" class="form-control" id="new-note" name="content" required>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Enregistrer</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

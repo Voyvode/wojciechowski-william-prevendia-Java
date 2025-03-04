@@ -1,25 +1,35 @@
 package com.medilabo.prevendia.frontend.dto;
 
+import java.time.LocalDate;
+
+import lombok.Data;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
+
+@Data
 public class PatientDTO {
 
+	private Long id;
+
+	@NotBlank
 	private String firstname;
+
+	@NotBlank
 	private String lastname;
 
-	// Getters et setters
-	public String getFirstname() {
-		return firstname;
-	}
+	@NotNull
+	@Past
+	private LocalDate birthdate;
 
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
+	@NotBlank
+	private String sex;
 
-	public String getLastname() {
-		return lastname;
-	}
+	private String address;
 
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
-	}
+	@Pattern(regexp = "\\d{3}-\\d{3}-\\d{4}")
+	private String phone;
 
 }

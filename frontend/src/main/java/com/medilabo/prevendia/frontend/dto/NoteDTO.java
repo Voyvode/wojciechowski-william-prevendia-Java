@@ -1,34 +1,25 @@
 package com.medilabo.prevendia.frontend.dto;
 
+import java.time.LocalDate;
+
+import lombok.Data;
+
+import jakarta.validation.constraints.NotBlank;
+
+@Data
 public class NoteDTO {
 
 	private Long patId;
 
 	private String patient;
 
+	@NotBlank
 	private String content;
 
-	public Long getPatId() {
-		return patId;
+	private LocalDate date;
+
+	public NoteDTO() {
+		date = LocalDate.now();
 	}
 
-	public String getPatient() {
-		return patient;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setPatId(Long patId) {
-		this.patId = patId;
-	}
-
-	public void setPatient(String patient) {
-		this.patient = patient;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
 }
