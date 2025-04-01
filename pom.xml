@@ -12,7 +12,7 @@
 	<artifactId>prevendia</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>PrevenDia</name>
+	<name>PrévenDia</name>
 	<description>Type 2 diabetes detection platform</description>
 	<url>https://github.com/voyvode/wojciechowski-william-prevendia-Java</url>
 	<developers>
@@ -32,10 +32,10 @@
 		<java.version>21</java.version>
 	</properties>
 	<modules>
-		<module>gateway</module>
-		<module>frontend</module>
+		<module>secured-gateway</module>
 		<module>backend-notes</module>
 		<module>backend-risk</module>
 		<module>backend-patients</module>
+		<module>frontend</module>
 	</modules>
 </project>
