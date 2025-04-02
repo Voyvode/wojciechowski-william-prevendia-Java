@@ -7,7 +7,8 @@ import com.medilabo.prevendia.frontend.dto.PatientProfileDTO;
 import com.medilabo.prevendia.frontend.dto.RiskDTO;
 import jakarta.validation.Valid;
 
-@FeignClient(name = "riskClient", url = "${clients.risk.url}")
+@FeignClient(name = "riskClient", url = "http://localhost:8083")
+//@FeignClient(name = "riskClient", url = "http://backend-risk:8083") TODO
 public interface RiskClient {
 
 	@PostMapping("/api/risk/")

@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.medilabo.prevendia.frontend.dto.NoteDTO;
 
-@FeignClient(name = "notesClient", url = "${clients.notes.url}")
+@FeignClient(name = "notesClient", url = "http://localhost:8082")
+//@FeignClient(name = "notesClient", url = "http://backend-notes:8082") TODO
 public interface NotesClient {
 
 	@GetMapping("/api/notes/{id}")
