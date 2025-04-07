@@ -18,9 +18,8 @@ public class CacheControlFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
 			throws ServletException, IOException {
 
-		// Ne pas appliquer aux ressources statiques
 		String path = request.getRequestURI();
-		if (!path.contains("/css/") && !path.contains("/js/") && !path.contains("/images/")) {
+		if (!path.contains("/css/") && !path.contains("/js/") && !path.contains("/img/")) {
 			response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 			response.setHeader("Pragma", "no-cache");
 			response.setHeader("Expires", "0");

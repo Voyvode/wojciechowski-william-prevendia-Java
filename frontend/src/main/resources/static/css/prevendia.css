@@ -1,0 +1,513 @@
+/* Login */
+.login-view {
+    background-color: #304878;
+    background-image: linear-gradient(135deg, #304878 0%, #1a2a43 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding-top: 25vh;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 384px;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2);
+    background-color: white;
+    border-top: 4px solid #0d6efd;
+}
+
+.login-container.secretary {
+    border-top: 4px solid #2e7d32;
+}
+
+.login-container.secretary .title {
+    color: #2e7d32;
+}
+
+.login-container.secretary .title::after {
+    background: linear-gradient(90deg, #2e7d32, #4caf50, #2e7d32);
+}
+
+.login-container.secretary .btn-primary {
+    background-color: #2e7d32;
+    border-color: #1b5e20;
+}
+
+.login-container.secretary .btn-primary:hover {
+    background-color: #1b5e20;
+}
+
+.form-floating {
+    margin-bottom: 1rem;
+}
+
+.icon {
+    display: inline-block;
+    vertical-align: -0.125em;
+}
+
+.title-container {
+    display: flex;
+    justify-content: center;
+    font-family: "Noto Sans", sans-serif;
+    padding: 24px 24px 48px 24px;
+    border-radius: 8px;
+    max-width: 512px;
+    margin: 0 auto;
+}
+
+.title {
+    font-size: 48px;
+    font-weight: 700;
+    color: #2170b8;
+    letter-spacing: 1px;
+    position: relative;
+    text-transform: uppercase;
+}
+
+.title::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #2170b8, #37a9e1, #2170b8);
+}
+
+.drop-accent {
+    color: #e74c3c;
+}
+
+/* Main */
+body {
+    background-color: #3a6ea5;
+    background-image: linear-gradient(135deg, #3a6ea5 0%, #2a5d94 50%, #2a4a7f 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding-top: 80px;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.navbar {
+    position: fixed;
+    top: 10px;
+    left: 0;
+    right: 0;
+    width: calc(100% - 32px);
+    max-width: 1100px;
+    margin: 0 auto;
+    border-radius: 10px;
+    z-index: 1030;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(5px);
+    background-color: rgba(255, 255, 255, 0.98);
+}
+
+.navbar.secretary {
+    border-top: 4px solid #2e7d32;
+}
+
+.navbar.secretary .navbar-title {
+    color: #2e7d32;
+}
+
+.navbar.secretary .navbar-title::after {
+    background: linear-gradient(90deg, #2e7d32, #4caf50, #2e7d32);
+}
+
+.navbar.secretary .btn-primary {
+    background-color: #2e7d32;
+    border-color: #1b5e20;
+}
+
+.navbar.secretary .btn-primary:hover {
+    background-color: #1b5e20;
+}
+
+.navbar.secretary .btn-success {
+    background-color: #2e7d32;
+    border-color: #1b5e20;
+}
+
+.navbar.secretary .btn-success:hover {
+    background-color: #1b5e20;
+}
+
+.navbar-brand {
+    margin-right: 0;
+}
+
+.main-content {
+    border-radius: 10px;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.25);
+    background-color: white;
+    border-top: 4px solid #3a8ac2;
+    position: relative;
+    overflow: hidden;
+    max-width: 1100px;
+    margin: 1rem auto 1.5rem;
+}
+
+.main-content:hover {
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.25);
+}
+
+.main-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(43, 121, 194, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+    z-index: 0;
+}
+
+.brand-name {
+    color: #0d6efd;
+    font-weight: bold;
+    font-variant: small-caps;
+    letter-spacing: 0.5px;
+}
+
+/* Style du logo comme sur la page de login */
+.navbar-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2170b8;
+    letter-spacing: 1px;
+    position: relative;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 8px 12px;
+    display: inline-block;
+}
+
+.navbar-title::after {
+    content: "";
+    position: absolute;
+    bottom: 6px;
+    left: 12px;
+    width: calc(100% - 24px);
+    height: 2px;
+    background: linear-gradient(90deg, #2170b8, #37a9e1, #2170b8);
+}
+
+.navbar-drop-accent {
+    color: #e74c3c;
+}
+
+.btn-success {
+    background-color: #1b6cb3;
+    border-color: #135a99;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.btn-success:hover {
+    background-color: #1660a0;
+    border-color: #0f4d83;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.icon {
+    display: inline-block;
+    vertical-align: -0.125em;
+}
+
+.btn-logout {
+    color: #6c757d;
+    text-decoration: none;
+    padding: 0.375rem 0.75rem;
+    transition: all 0.2s;
+}
+
+.btn-logout:hover {
+    color: #dc3545;
+    text-decoration: none;
+}
+
+/* Styles avec contrastes renforcés pour le tableau */
+.patients-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    border: none;
+    margin-bottom: 0;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.patients-table thead th {
+    background-color: #2b5884;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-top: none;
+    border-bottom: none;
+    padding: 0.85rem 1rem;
+}
+
+.patients-table thead th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.patients-table thead th:last-child {
+    border-top-right-radius: 8px;
+}
+
+.patients-table tbody tr {
+    border-bottom: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.patients-table tbody tr:hover {
+    background-color: rgba(58, 142, 165, 0.15);
+}
+
+.patients-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.patients-table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.patients-table .patient-name {
+    font-weight: 600;
+    color: #1a4971;
+    letter-spacing: 0.3px;
+}
+
+.btn-action {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    padding: 0;
+}
+
+.btn-action:hover {
+    background-color: rgba(58, 142, 165, 0.1);
+}
+
+.btn-primary {
+    background-color: #1b6cb3;
+    border-color: #135a99;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+    background-color: #1660a0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.actions-cell {
+    white-space: nowrap;
+}
+
+.badge-gender {
+    padding: 0.4em 0.75em;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-male {
+    background-color: rgba(43, 121, 194, 0.18);
+    color: #1a4971;
+    border: 1px solid rgba(43, 121, 194, 0.3);
+}
+
+.badge-female {
+    background-color: rgba(214, 51, 132, 0.18);
+    color: #a72c5e;
+    border: 1px solid rgba(214, 51, 132, 0.3);
+}
+
+.page-header {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.page-title {
+    color: #1a4971;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.patient-count {
+    font-size: 0.85rem;
+    color: #5a6268;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+.patient-contact {
+    line-height: 1.4;
+}
+
+.patient-contact .patient-phone {
+    color: #1a4971;
+    font-weight: 500;
+}
+
+.patient-address {
+    color: #495057;
+}
+
+.patient-birthdate {
+    font-weight: 500;
+    color: #495057;
+}
+
+.avatar-circle {
+    width: 40px !important;
+    height: 40px !important;
+    overflow: hidden !important;
+    border-radius: 50% !important;
+    position: relative !important;
+    border: 2px solid rgba(43, 121, 194, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-img {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+}
+
+.user-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #2a4a7f;
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    text-transform: uppercase;
+    font-variant: small-caps;
+    letter-spacing: 0.5px;
+}
+
+.user-profile-container {
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.user-profile-container:hover {
+    background-color: rgba(58, 142, 165, 0.08);
+}
+
+.user-profile-container::after {
+    display: none !important;
+}
+
+.dropdown-item button {
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    padding: 0.25rem 1rem;
+}
+
+.dropdown-menu {
+    min-width: 200px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: none;
+    padding: 0.5rem;
+}
+
+.dropdown-item {
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(43, 121, 194, 0.08);
+}
+
+.table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Animation subtile pour les boutons d'action */
+.btn-action {
+    opacity: 0.9;
+}
+
+.btn-action:hover {
+    opacity: 1;
+}
+
+/* Amélioration de la lisibilité des données */
+.patient-name {
+    position: relative;
+    display: inline-block;
+}
+
+.patient-name::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #1b6cb3;
+    transition: width 0.3s ease;
+}
+
+tr:hover .patient-name::after {
+    width: 100%;
+}
+
+/* Styles pour le tri des colonnes */
+.sortable {
+    cursor: pointer;
+    position: relative;
+}
+
+.sortable:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sort-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+    vertical-align: middle;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+    border-bottom: 4px solid rgba(255, 255, 255, 0.5);
+}
+
+.sortable.asc .sort-icon {
+    border-bottom: none;
+    border-top: 4px solid white;
+}
+
+.sortable.desc .sort-icon {
+    border-bottom: 4px solid white;
+    border-top: none;
+}

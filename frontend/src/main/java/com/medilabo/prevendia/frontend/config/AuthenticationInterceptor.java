@@ -19,7 +19,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 		}
 
 		var session = request.getSession(false);
-		if (session != null && session.getAttribute("authToken") != null) {
+		if (session != null && session.getAttribute("token") != null) {
 			return true;
 		}
 

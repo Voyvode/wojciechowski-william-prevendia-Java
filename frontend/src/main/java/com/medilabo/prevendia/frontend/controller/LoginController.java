@@ -33,8 +33,9 @@ public class LoginController {
 		try {
 			var authResponse = authClient.authenticate(authRequest);
 
-			session.setAttribute("authToken", authResponse.token());
+			session.setAttribute("token", authResponse.token());
 			session.setAttribute("username", authResponse.username());
+			session.setAttribute("shownName", authResponse.shownName());
 			session.setAttribute("roles", authResponse.roles());
 
 			return "redirect:/";

@@ -29,7 +29,7 @@ public class PatientDTO {
 
 	private String address;
 
-	@Pattern(regexp = "\\d{3}-\\d{3}-\\d{4}")
+	@Pattern(regexp = "^$|\\d{3}-\\d{3}-\\d{4}")
 	private String phone;
 
 }

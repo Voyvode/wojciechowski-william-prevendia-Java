@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.medilabo.prevendia.frontend.dto.AuthenticationRequest;
 import com.medilabo.prevendia.frontend.dto.AuthenticationResponse;
 
-@FeignClient(name = "authClient", url = "http://localhost:8080")
-//@FeignClient(name = "authClient", url = "http://secured-gateway:8080") TODO
+@FeignClient(name = "authClient", url = "http://secured-gateway:8080")
 public interface AuthClient {
 
 	@PostMapping("/api/auth/login")

@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 import com.medilabo.prevendia.frontend.dto.PatientDTO;
 
-@FeignClient(name = "patientsClient", url = "http://localhost:8081")
-//@FeignClient(name = "patientsClient", url = "http://backend-patients:8081") TODO
+@FeignClient(name = "patientsClient", url = "http://secured-gateway:8080")
 public interface PatientsClient {
 
 	@GetMapping("/api/patients")

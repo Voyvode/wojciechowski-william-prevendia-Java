@@ -1,26 +1,29 @@
 package com.medilabo.prevendia.frontend.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import feign.RequestInterceptor;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Configuration
 public class FeignConfig {
 
-	@Autowired
-	private HttpSession session;
-
 	@Bean
-	public RequestInterceptor jwtAuthRequestInterceptor() {
-		return template -> {
+	public RequestInterceptor bearerTokenRequestInterceptor(HttpSession session) {
+		return requestTemplate -> {
 			String token = (String) session.getAttribute("token");
-			if (token != null) {
-				template.header("Authorization", "Bearer " + token);
+			log.info("Bearer token avant envoi requête: {}", token);
+			if (token != null && !token.isEmpty()) {
+				requestTemplate.header("Authorization", "Bearer " + token);
+				log.info("Token ajouté à l'en-tête de la requête");
+			} else {
+				log.warn("Aucun token disponible pour la requête");
 			}
 		};
 	}
 
 }
+
