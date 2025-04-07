@@ -3,16 +3,20 @@ package com.medilabo.prevendia.authentication.service;
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import lombok.extern.slf4j.Slf4j;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import reactor.core.publisher.Mono;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -33,20 +37,23 @@ public class JwtService {
 	 * Generates a JWT token for a user with optional additional claims.
 	 *
 	 * @param username user identifier to be included in the token
-	 * @param claims additional claims to include in the token (can be null)
 	 * @return signed JWT token string
 	 */
-	public String generateToken(String username, Map<String, Object> claims) {
-		return createToken(claims != null ? claims : Map.of(), username);
+	public Mono<String> generateToken(String username) {
+		return Mono.fromCallable(() -> {
+			Map<String, Object> claims = new HashMap<>();
+			return createToken(claims, username);
+		});
 	}
 
 	/**
 	 * Validates a JWT token's signature and expiration.
 	 *
 	 * @param token JWT token to validate
-	 * @return true if token is valid, false otherwise
+	 * @return Mono<Boolean> true if token is valid, false otherwise
 	 */
-	public boolean validateToken(String token) {
+	public Mono<Boolean> validateToken(String token) {
+		return Mono.fromCallable(() -> {
 			// Check token signature and structure
 			Jwts.parserBuilder()
 					.setSigningKey(getSignKey())
@@ -55,6 +62,7 @@ public class JwtService {
 
 			Instant expiration = extractClaim(token, Claims::getExpiration).toInstant();
 			return Instant.now().isBefore(expiration);
+		});
 	}
 
 	/**

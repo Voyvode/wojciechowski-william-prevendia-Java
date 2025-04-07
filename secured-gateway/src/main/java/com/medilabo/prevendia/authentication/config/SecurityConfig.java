@@ -2,53 +2,66 @@ package com.medilabo.prevendia.authentication.config;
 
 import java.util.List;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+
+import static org.springframework.security.config.web.server.SecurityWebFiltersOrder.AUTHENTICATION;
+
+/**
+ * Security configuration for the authentication service.
+ */
 @Configuration
-@EnableWebSecurity
+@EnableWebFluxSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final SessionTokenAuthenticationFilter filter;
+	private final JwtAuthenticationFilter jwtAuthFilter;
 
+	/**
+	 * Configures the security filter chain for HTTP requests.
+	 *
+	 * @param http the ServerHttpSecurity to configure
+	 * @return the configured SecurityWebFilterChain
+	 */
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http)
-			throws Exception {
+	public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
 		return http
-				.csrf(AbstractHttpConfigurer::disable)
-				.cors(cors -> {})
-				.authorizeHttpRequests(auth ->
-						auth.requestMatchers("/api/auth/login", "/api/auth/validate").permitAll()
-								.anyRequest().authenticated())
-				.sessionManagement(session ->
-						session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.headers(headers ->
-						headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-				.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+				.csrf(ServerHttpSecurity.CsrfSpec::disable)
+				.cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
+				.authorizeExchange(exchanges ->
+						exchanges
+								.pathMatchers("/api/auth/login", "/api/auth/validate").permitAll()
+								.anyExchange().authenticated()
+				)
+				.addFilterAt(jwtAuthFilter, AUTHENTICATION)
 				.build();
 	}
 
-
+	/**
+	 * Provides password encoder for secure password storage.
+	 *
+	 * @return BCrypt password encoder instance
+	 */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
+	/**
+	 * Configures CORS settings for cross-origin requests.
+	 *
+	 * @return configured CORS source
+	 */
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		var config = new CorsConfiguration();

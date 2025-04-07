@@ -1,16 +1,16 @@
 package com.medilabo.prevendia.authentication.repository;
 
-import java.util.Optional;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import reactor.core.publisher.Mono;
 
 import com.medilabo.prevendia.authentication.model.User;
 
 /**
  * Repository for authentication user management.
  */
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends ReactiveCrudRepository<User, Long> {
 
-	Optional<User> findByUsername(String username);
+	Mono<User> findByUsername(String username);
 
 }
