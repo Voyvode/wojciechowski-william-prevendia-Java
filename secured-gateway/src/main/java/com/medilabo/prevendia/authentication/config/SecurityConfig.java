@@ -41,6 +41,10 @@ public class SecurityConfig {
 				.authorizeExchange(exchanges ->
 						exchanges
 								.pathMatchers("/api/auth/login", "/api/auth/validate").permitAll()
+								.pathMatchers("/css/**", "/js/**", "/images/**").permitAll()
+								.pathMatchers("/api/patients/**").hasAnyAuthority("ROLE_DOCTOR", "ROLE_ORGANIZER")
+								.pathMatchers("/api/notes/**").hasAuthority("ROLE_DOCTOR")
+								.pathMatchers("/api/risk/**").hasAuthority("ROLE_DOCTOR")
 								.anyExchange().authenticated()
 				)
 				.addFilterAt(jwtAuthFilter, AUTHENTICATION)
@@ -66,8 +70,10 @@ public class SecurityConfig {
 	public CorsConfigurationSource corsConfigurationSource() {
 		var config = new CorsConfiguration();
 		config.setAllowedOrigins(List.of("http://frontend:8090"));
-		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-		config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-User-Name", "X-User-Roles"));
+		config.setAllowCredentials(true);
+		config.setMaxAge(3600L);
 
 		var source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);

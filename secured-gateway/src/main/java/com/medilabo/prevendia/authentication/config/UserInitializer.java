@@ -30,13 +30,13 @@ public class UserInitializer {
 			doc.setUsername("g.maison");
 			doc.setShownName("Dʳ Maison");
 			doc.setPassword(passcoder.encode("doctor_password"));
-			doc.setRoles(Set.of("DOCTOR"));
+			doc.setRoles(Set.of("ROLE_DOCTOR"));
 
 			var sec = new User();
 			sec.setUsername("l.holloway");
 			sec.setShownName("Holloway");
 			sec.setPassword(passcoder.encode("secretary_password"));
-			sec.setRoles(Set.of("ORGANIZER"));
+			sec.setRoles(Set.of("ROLE_ORGANIZER"));
 
 			userRepo.save(doc)
 					.then(userRepo.save(sec))

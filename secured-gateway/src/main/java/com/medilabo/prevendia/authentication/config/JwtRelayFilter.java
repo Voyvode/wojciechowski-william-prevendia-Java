@@ -6,12 +6,16 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 /**
  * Global filter implementing JWT relay functionality in the API Gateway.
  */
 @Component
+@Slf4j
 public class JwtRelayFilter implements GlobalFilter, Ordered {
 
 	/**
@@ -23,7 +27,23 @@ public class JwtRelayFilter implements GlobalFilter, Ordered {
 	 */
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-		return chain.filter(exchange);
+		String authHeader = exchange.getRequest().getHeaders().getFirst(AUTHORIZATION);
+
+		if (authHeader != null && authHeader.startsWith("Bearer ")) {
+			log.debug("Relaying JWT token to downstream service: {}", exchange.getRequest().getPath().value());
+			log.info("Relaying JWT token to downstream service: {}", exchange.getRequest().getPath().value());
+			
+			ServerWebExchange mutatedExchange = exchange.mutate()
+					.request(exchange.getRequest().mutate()
+							.header(AUTHORIZATION, authHeader)
+							.build())
+					.build();
+			
+			return chain.filter(mutatedExchange);
+		} else {
+			log.warn("No JWT token found in request to: {}", exchange.getRequest().getPath().value());
+			return chain.filter(exchange);
+		}
 	}
 
 	/**

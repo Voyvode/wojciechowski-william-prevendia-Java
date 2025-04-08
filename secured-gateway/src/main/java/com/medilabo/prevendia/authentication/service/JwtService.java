@@ -6,7 +6,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Set;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import io.jsonwebtoken.Claims;
@@ -18,12 +23,16 @@ import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Mono;
 
+import com.medilabo.prevendia.authentication.model.User;
+import com.medilabo.prevendia.authentication.repository.UserRepository;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Service handling JWT token operations including generation, validation, and claims extraction.
  */
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class JwtService {
 
@@ -33,6 +42,8 @@ public class JwtService {
 	@Value("${jwt.expiration}")
 	private Long expiration;
 
+	private final UserRepository userRepository;
+
 	/**
 	 * Generates a JWT token for a user with optional additional claims.
 	 *
@@ -40,10 +51,14 @@ public class JwtService {
 	 * @return signed JWT token string
 	 */
 	public Mono<String> generateToken(String username) {
-		return Mono.fromCallable(() -> {
-			Map<String, Object> claims = new HashMap<>();
-			return createToken(claims, username);
-		});
+		log.info("Generating JWT token for user {}", username);
+		return userRepository.findByUsername(username)
+				.map(User::getRoles)
+				.map(roles -> {
+					Map<String, Object> claims = new HashMap<>();
+					claims.put("roles", roles);
+					return createToken(claims, username);
+				});
 	}
 
 	/**
@@ -53,6 +68,7 @@ public class JwtService {
 	 * @return Mono<Boolean> true if token is valid, false otherwise
 	 */
 	public Mono<Boolean> validateToken(String token) {
+		log.info("Validating JWT token");
 		return Mono.fromCallable(() -> {
 			// Check token signature and structure
 			Jwts.parserBuilder()
@@ -83,6 +99,29 @@ public class JwtService {
 	 */
 	public String extractRole(String token) {
 		return extractClaim(token, claims -> claims.get("role", String.class));
+	}
+
+	/**
+	 * Extracts the roles from a JWT token.
+	 *
+	 * @param token JWT token
+	 * @return the roles stored in the token
+	 */
+	@SuppressWarnings("unchecked")
+	public Set<String> extractRoles(String token) {
+		Object rolesObj = extractClaim(token, claims -> claims.get("roles"));
+		log.info("Roles object from token: {}", rolesObj);
+		if (rolesObj instanceof List) {
+			Set<String> roles = new HashSet<>((List<String>) rolesObj);
+			log.info("Extracted roles from List: {}", roles);
+			return roles;
+		} else if (rolesObj instanceof String) {
+			Set<String> roles = new HashSet<>(Arrays.asList(((String) rolesObj).split(",")));
+			log.info("Extracted roles from String: {}", roles);
+			return roles;
+		}
+		log.warn("No roles found in token");
+		return new HashSet<>();
 	}
 
 	/**

@@ -26,8 +26,9 @@ public class AuthenticationService {
 
 	public Mono<AuthenticationResponse> authenticate(AuthenticationRequest request) {
 		String username = request.username();
+		log.info("Authentication attempt by user {}", username);
+
 		return userRepository.findByUsername(username)
-				.doOnNext(user -> log.info("Authentication attempt by user {}", username))
 				.filter(user -> passwordEncoder.matches(request.password(), user.getPassword()))
 				.flatMap(user -> jwtService.generateToken(user.getUsername())
 						.doOnNext(token -> log.info("JWT token generated for user {}", username))
@@ -49,6 +50,7 @@ public class AuthenticationService {
 					));
 				}));
 	}
+
 	public Mono<Boolean> validateToken(String token) {
 		return jwtService.validateToken(token)
 				.doOnNext(valid -> {
