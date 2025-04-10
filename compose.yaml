@@ -16,6 +16,7 @@ services:
       - "8090:8090"
     depends_on:
       - secured-gateway
+    restart: unless-stopped
 
   # ==================== SECURED GATEWAY ====================
 
@@ -40,7 +41,8 @@ services:
       - backend-patients
       - backend-notes
       - backend-risk
-
+    restart: unless-stopped
+    
   # ======================== BACKENDS ========================
 
   backend-patients:
@@ -63,7 +65,8 @@ services:
     depends_on:
       db-patients:
         condition: service_healthy
-
+    restart: unless-stopped
+    
   backend-notes:
     container_name: prevendia-backend-notes
     build:
@@ -84,7 +87,8 @@ services:
     depends_on:
       db-notes:
         condition: service_healthy
-
+    restart: unless-stopped
+    
   backend-risk:
     container_name: prevendia-backend-risk
     build:
@@ -99,6 +103,7 @@ services:
       - prevendia-network
     ports:
       - "8083:8083"
+    restart: unless-stopped
 
   # ======================= DATABASES ========================
 
@@ -121,7 +126,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-
+    restart: unless-stopped
+    
   db-notes:
     image: mongo:latest
     container_name: prevendia-db-notes
@@ -142,11 +148,31 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   patients-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/data/postgres
+      o: bind
   notes-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/data/mongo
+      o: bind
 
 networks:
   prevendia-network:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
