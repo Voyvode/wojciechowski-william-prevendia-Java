@@ -1,0 +1,67 @@
+image::frontend/src/main/resources/static/logo.svg[Logo]
+
+= PrévenDia
+
+PrévenDia apporte une réponse aux besoins des professionnels de santé dans leur mission de
+prévention du diabète de type 2.
+
+L’application se concentre sur trois fonctionnalités principales :
+
+1. *Gestion démographique des patients* : Enregistrement des profils avec données essentielles pour l’évaluation du risque.
+
+2. *Notes médicales* : Notes de suivi ajouter par les médecins pendant les consultations.
+
+3. *Analyse de risque* : Évaluation du risque diabétique basée sur le profil et les notes de suivi.
+
+Cette solution permet d’identifier les patients vulnérables et d’établir des stratégies préventives, notamment pour ceux privilégiant une alimentation riche en sucre et calories au détriment d’un régime équilibré.
+
+== Architecture
+
+PrévenDia est construit sur une architecture microservices composée de plusieurs modules indépendants qui communiquent entre eux :
+
+* *Frontend* : Interface utilisateur
+* *Secured Gateway* : API sécurisée (authentification/autorisation)
+* *Backend Patients* : Gestion des patients (PostgreSQL)
+* *Backend Notes* : Gestion des notes médicales (MongoDB)
+* *Backend Risk* : Évaluation des risques diabétiques
+
+image::architecture.svg[Architecture PrévenDia,width=100%]
+
+== Installation
+
+. Cloner le dépôt :
++
+[source,bash]
+----
+git clone https://github.com/voyvode/wojciechowski-william-prevendia-Java.git
+cd wojciechowski-william-prevendia-Java
+----
+
+. Configurer `.env` à la racine :
++
+[source]
+----
+JWT_SECRET=votre_clé_secrète_jwt
+JWT_EXPIRATION=86400000
+DB_PATIENTS_PASSWORD=mot_de_passe_postgres
+DB_NOTES_PASSWORD=mot_de_passe_mongodb
+----
+
+. Lancer avec Docker Compose :
++
+[source,bash]
+----
+docker-compose up -d
+----
+
+== Utilisation
+
+Accès local à l’application : http://localhost:8090
+
+== Technologies utilisées
+
+* *Backend* : Spring Boot 3, Spring Cloud, Spring Security, JWT
+* *Base de données* : PostgreSQL, MongoDB
+* *Frontend* : Spring MVC (Thymeleaf)
+* *Conteneurisation* : Docker, Docker Compose
+* *Outils* : Maven, Git
