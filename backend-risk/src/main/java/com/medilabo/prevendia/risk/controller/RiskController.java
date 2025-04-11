@@ -6,11 +6,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import com.medilabo.prevendia.risk.dto.PatientProfileDTO;
 import com.medilabo.prevendia.risk.model.Risk;
 import com.medilabo.prevendia.risk.service.RiskService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -22,7 +23,7 @@ public class RiskController {
 
 	private final RiskService riskService;
 
-	@PostMapping("/")
+	@PostMapping
 	@ResponseStatus(OK)
 	public Risk assessRisk(@RequestBody PatientProfileDTO profile) {
 		log.info("Request to assess risk");

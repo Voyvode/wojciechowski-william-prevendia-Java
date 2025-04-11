@@ -12,6 +12,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 /**
  * Entity representing a user in the authentication system.
  */
@@ -23,12 +26,15 @@ public class User {
 	private Long id;
 
 	@Column
+	@NotBlank
 	private String username;
 
 	@Column
+	@NotBlank
 	private String shownName;
 
 	@Column
+	@NotBlank
 	private String password;
 
 	@Column

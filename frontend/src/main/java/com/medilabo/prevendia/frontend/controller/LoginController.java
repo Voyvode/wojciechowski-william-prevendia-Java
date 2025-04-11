@@ -1,11 +1,14 @@
 package com.medilabo.prevendia.frontend.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +18,7 @@ import com.medilabo.prevendia.frontend.dto.AuthenticationRequest;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class LoginController {
 
 	private final AuthClient authClient;
@@ -26,8 +30,13 @@ public class LoginController {
 	}
 
 	@PostMapping("/login")
-	public String processLogin(@ModelAttribute AuthenticationRequest authRequest,
-							   HttpSession session) {
+	public String processLogin(@Valid @ModelAttribute AuthenticationRequest authRequest,
+							   BindingResult result, HttpSession session, Model model) {
+		if (result.hasErrors()) {
+			log.warn("Login form errors: {}", result.getAllErrors());
+			return "login";
+		}
+		
 		var authResponse = authClient.authenticate(authRequest);
 
 		session.setAttribute("token", authResponse.token());
