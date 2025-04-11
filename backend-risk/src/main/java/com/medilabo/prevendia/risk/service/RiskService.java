@@ -39,7 +39,7 @@ public class RiskService {
 			case "F30-" -> (n <= 1) ? NONE : (n <= 3) ? BORDERLINE : (n <= 6) ? IN_DANGER : EARLY_ONSET;
 			case "M30+" -> (n <= 1) ? NONE : (n <= 5) ? BORDERLINE : (n <= 7) ? IN_DANGER : EARLY_ONSET;
 			case "F30+" -> (n <= 1) ? NONE : (n <= 6) ? BORDERLINE : (n == 7) ? IN_DANGER : EARLY_ONSET;
-			default -> throw new IllegalArgumentException("Invalid patient data");
+			default -> throw new IllegalArgumentException("Données patient invalides");
 		};
 		log.debug("Estimated risk: {}", risk);
 

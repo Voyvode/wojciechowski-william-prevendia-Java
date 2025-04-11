@@ -1,123 +1,80 @@
 package com.medilabo.prevendia.authentication.exception;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.SignatureException;
-
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ServerWebExchange;
+
+import reactor.core.publisher.Mono;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestControllerAdvice
+@Order(-1)
 @Slf4j
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
 
-	@ExceptionHandler(ExpiredJwtException.class)
-	public ResponseEntity<ApiError> handleExpiredJwtException(ExpiredJwtException ex) {
-		log.error("JWT token expired", ex);
-		ApiError apiError = new ApiError(
-				LocalDateTime.now(),
-				UNAUTHORIZED,
-				"JWT token expired",
-				ex.getMessage()
-		);
-		return new ResponseEntity<>(apiError, UNAUTHORIZED);
-	}
-
-	@ExceptionHandler(MalformedJwtException.class)
-	public ResponseEntity<ApiError> handleMalformedJwtException(MalformedJwtException ex) {
-		log.error("Malformed JWT token", ex);
-		ApiError apiError = new ApiError(
-				LocalDateTime.now(),
-				UNAUTHORIZED,
-				"Malformed JWT token",
-				ex.getMessage()
-		);
-		return new ResponseEntity<>(apiError, UNAUTHORIZED);
-	}
-
-	@ExceptionHandler(SignatureException.class)
-	public ResponseEntity<ApiError> handleSignatureException(SignatureException ex) {
-		log.error("Invalid JWT signature", ex);
-		ApiError apiError = new ApiError(
-				LocalDateTime.now(),
-				UNAUTHORIZED,
-				"Invalid JWT signature",
-				ex.getMessage()
-		);
-		return new ResponseEntity<>(apiError, UNAUTHORIZED);
-	}
-
-	@ExceptionHandler(UnsupportedJwtException.class)
-	public ResponseEntity<ApiError> handleUnsupportedJwtException(UnsupportedJwtException ex) {
-		log.error("Unsupported JWT token", ex);
-		ApiError apiError = new ApiError(
-				LocalDateTime.now(),
-				UNAUTHORIZED,
-				"Unsupported JWT token",
-				ex.getMessage()
-		);
-		return new ResponseEntity<>(apiError, UNAUTHORIZED);
-	}
-
-	@ExceptionHandler(AuthenticationException.class)
-	public ResponseEntity<ApiError> handleAuthenticationException(AuthenticationException ex) {
-		log.error("Authentication failed", ex);
-		ApiError apiError = new ApiError(
-				LocalDateTime.now(),
-				UNAUTHORIZED,
-				"Authentication failed",
-				ex.getMessage()
-		);
-		return new ResponseEntity<>(apiError, UNAUTHORIZED);
-	}
-
-	@ExceptionHandler(AccessDeniedException.class)
-	public ResponseEntity<ApiError> handleAccessDeniedException(AccessDeniedException ex) {
-		log.error("Access denied", ex);
-		ApiError apiError = new ApiError(
-				LocalDateTime.now(),
-				FORBIDDEN,
-				"Access denied",
-				ex.getMessage()
-		);
-		return new ResponseEntity<>(apiError, FORBIDDEN);
-	}
-
-	@ExceptionHandler(BadCredentialsException.class)
-	public ResponseEntity<ApiError> handleBadCredentialsException(BadCredentialsException ex) {
-		log.error("Bad credentials", ex);
-		ApiError apiError = new ApiError(
-				LocalDateTime.now(),
-				UNAUTHORIZED,
-				"Bad credentials",
-				ex.getMessage()
-		);
-		return new ResponseEntity<>(apiError, UNAUTHORIZED);
-	}
-
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ApiError> handleAllOtherExceptions(Exception ex) {
+	@Override
+	@NonNull
+	public Mono<Void> handle(@NonNull ServerWebExchange exchange, @NonNull Throwable ex) {
 		log.error("Unexpected error occurred", ex);
-		ApiError apiError = new ApiError(
-				LocalDateTime.now(),
-				INTERNAL_SERVER_ERROR,
-				"Une erreur inattendue s'est produite",
-				ex.getMessage()
-		);
-		return new ResponseEntity<>(apiError, INTERNAL_SERVER_ERROR);
+		
+		ApiError apiError;
+		HttpStatus status;
+
+		if (ex instanceof AuthenticationException) {
+			status = UNAUTHORIZED;
+			apiError = new ApiError(
+					LocalDateTime.now(),
+					status.value(),
+					"Authentication failed",
+					"Échec de l'authentification",
+					exchange.getRequest().getPath().value(),
+					List.of()
+			);
+		} else if (ex instanceof AccessDeniedException) {
+			status = FORBIDDEN;
+			apiError = new ApiError(
+					LocalDateTime.now(),
+					status.value(),
+					"Access denied",
+					"Accès refusé",
+					exchange.getRequest().getPath().value(),
+					List.of()
+			);
+		} else {
+			status = INTERNAL_SERVER_ERROR;
+			apiError = new ApiError(
+					LocalDateTime.now(),
+					status.value(),
+					"Internal server error",
+					"Une erreur inattendue s'est produite",
+					exchange.getRequest().getPath().value(),
+					List.of()
+			);
+		}
+
+		exchange.getResponse().setStatusCode(status);
+		exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+		byte[] bytes = apiError.toString().getBytes(StandardCharsets.UTF_8);
+		DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
+
+		return exchange.getResponse().writeWith(Mono.just(buffer));
 	}
 
 }

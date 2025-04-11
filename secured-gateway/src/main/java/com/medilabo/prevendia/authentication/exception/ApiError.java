@@ -1,7 +1,23 @@
 package com.medilabo.prevendia.authentication.exception;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import org.springframework.http.HttpStatus;
+public record ApiError(
+        LocalDateTime timestamp,
+        int status,
+        String error,
+        String message,
+        String path,
+        List<String> details
+) {
 
-public record ApiError(LocalDateTime time, HttpStatus code, String message, String exception) { }
+    public ApiError(int status, String error, String message, String path) {
+        this(LocalDateTime.now(), status, error, message, path, List.of());
+    }
+
+    public ApiError(int status, String error, String message, String path, List<String> details) {
+        this(LocalDateTime.now(), status, error, message, path, details);
+    }
+
+}

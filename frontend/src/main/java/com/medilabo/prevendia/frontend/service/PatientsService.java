@@ -7,11 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
 
-import feign.FeignException;
-
 import com.medilabo.prevendia.frontend.client.PatientsClient;
 import com.medilabo.prevendia.frontend.dto.PatientDTO;
-import com.medilabo.prevendia.frontend.exception.ResourceNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,43 +18,19 @@ public class PatientsService {
 	private final PatientsClient patientsClient;
 
 	public void addPatient(PatientDTO patientDTO) {
-		try {
-			patientsClient.addPatient(patientDTO);
-		} catch (FeignException e) {
-			log.error("External API error while adding a new patient");
-			throw new RuntimeException("Can't add a new patient", e);
-		}
+		patientsClient.addPatient(patientDTO);
 	}
 
 	public List<PatientDTO> getPatients() {
-		try {
-			return patientsClient.getPatients();
-		} catch (FeignException e) {
-			log.error("External API error while getting patient list", e);
-			throw new RuntimeException("Can't get patient list", e);
-		}
+		return patientsClient.getPatients();
 	}
 
 	public PatientDTO getPatient(Long patientId) {
-		try {
-			return patientsClient.getPatient(patientId);
-		} catch (FeignException.NotFound e) {
-			throw new ResourceNotFoundException("Patient " + patientId + " not found");
-		} catch (FeignException e) {
-			log.error("External API error while fetching a patient", e);
-			throw new RuntimeException("Can't fetch a patient", e);
-		}
+		return patientsClient.getPatient(patientId);
 	}
 
 	public void updatePatient(Long patientId, PatientDTO patientDTO) {
-		try {
-			patientsClient.updatePatient(patientId, patientDTO);
-		}  catch (FeignException.NotFound e) {
-			throw new ResourceNotFoundException("Patient " + patientId + " not found");
-		} catch (FeignException e) {
-			log.error("External API error while adding new note to a patient", e);
-			throw new RuntimeException("Can't add new note to a patient", e);
-		}
+		patientsClient.updatePatient(patientId, patientDTO);
 	}
 
 }

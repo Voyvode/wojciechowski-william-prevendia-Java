@@ -5,6 +5,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,14 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import com.medilabo.prevendia.notes.exception.AuthenticationException;
 
 @Component
 @RequiredArgsConstructor
@@ -37,24 +38,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 		if (authHeader == null) {
 			log.warn("No Authorization header found for request: {}", requestURI);
-			response.setStatus(SC_UNAUTHORIZED);
-			response.getWriter().write("Authorization header is missing");
-			return;
+			throw new AuthenticationException("En-tête d'autorisation absent");
 		}
 
 		if (!authHeader.startsWith("Bearer ")) {
 			log.warn("Invalid Authorization header format for request: {}", requestURI);
-			response.setStatus(SC_UNAUTHORIZED);
-			response.getWriter().write("Authorization header must start with 'Bearer '");
-			return;
+			throw new AuthenticationException("En-tête d'autorisation ne commençant pas par 'Bearer '");
 		}
 
 		String jwt = authHeader.substring(7);
 		if (!jwtUtil.validateToken(jwt)) {
 			log.warn("Invalid JWT token for request: {}", requestURI);
-			response.setStatus(SC_UNAUTHORIZED);
-			response.getWriter().write("Invalid or expired token");
-			return;
+			throw new AuthenticationException("Jeton invalide ou expiré");
 		}
 
 		String username = jwtUtil.extractUsername(jwt);
@@ -73,4 +68,5 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		log.debug("JWT token validated successfully for request: {}", requestURI);
 		filterChain.doFilter(request, response);
 	}
-} 
+
+}

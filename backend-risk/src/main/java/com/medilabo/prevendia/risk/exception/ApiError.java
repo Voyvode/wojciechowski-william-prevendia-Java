@@ -1,4 +1,4 @@
-package com.medilabo.prevendia.patients.exception;
+package com.medilabo.prevendia.risk.exception;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.medilabo.prevendia.frontend.client.AuthClient;
 import com.medilabo.prevendia.frontend.dto.AuthenticationRequest;
@@ -28,21 +27,15 @@ public class LoginController {
 
 	@PostMapping("/login")
 	public String processLogin(@ModelAttribute AuthenticationRequest authRequest,
-							   HttpSession session,
-							   RedirectAttributes redirectAttributes) {
-		try {
-			var authResponse = authClient.authenticate(authRequest);
+							   HttpSession session) {
+		var authResponse = authClient.authenticate(authRequest);
 
-			session.setAttribute("token", authResponse.token());
-			session.setAttribute("username", authResponse.username());
-			session.setAttribute("shownName", authResponse.shownName());
-			session.setAttribute("roles", authResponse.roles());
+		session.setAttribute("token", authResponse.token());
+		session.setAttribute("username", authResponse.username());
+		session.setAttribute("shownName", authResponse.shownName());
+		session.setAttribute("roles", authResponse.roles());
 
-			return "redirect:/";
-		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("error", true);
-			return "redirect:/login?error";
-		}
+		return "redirect:/";
 	}
 
 	@PostMapping("/logout")
@@ -52,4 +45,3 @@ public class LoginController {
 	}
 
 }
-

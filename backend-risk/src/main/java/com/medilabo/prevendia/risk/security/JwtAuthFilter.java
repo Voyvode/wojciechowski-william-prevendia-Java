@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import com.medilabo.prevendia.risk.exception.AuthenticationException;
 
 @Component
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 	private final JwtUtil jwtUtil;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request,
+	protected void doFilterInternal(@NonNull HttpServletRequest request,
 									@NonNull HttpServletResponse response,
 									@NonNull FilterChain filterChain) throws ServletException, IOException {
 		String authHeader = request.getHeader("Authorization");
@@ -37,24 +37,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 		if (authHeader == null) {
 			log.warn("No Authorization header found for request: {}", requestURI);
-			response.setStatus(SC_UNAUTHORIZED);
-			response.getWriter().write("Authorization header is missing");
-			return;
+			throw new AuthenticationException("En-tête d'autorisation absent");
 		}
 
 		if (!authHeader.startsWith("Bearer ")) {
 			log.warn("Invalid Authorization header format for request: {}", requestURI);
-			response.setStatus(SC_UNAUTHORIZED);
-			response.getWriter().write("Authorization header must start with 'Bearer '");
-			return;
+			throw new AuthenticationException("En-tête d'autorisation ne commençant pas par 'Bearer '");
 		}
 
 		String jwt = authHeader.substring(7);
 		if (!jwtUtil.validateToken(jwt)) {
 			log.warn("Invalid JWT token for request: {}", requestURI);
-			response.setStatus(SC_UNAUTHORIZED);
-			response.getWriter().write("Invalid or expired token");
-			return;
+			throw new AuthenticationException("Jeton invalide ou expiré");
 		}
 
 		String username = jwtUtil.extractUsername(jwt);
@@ -66,11 +60,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 				.collect(Collectors.toList());
 		log.debug("Authorities: {}", authorities);
 
-		var authentication = new UsernamePasswordAuthenticationToken(
+		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
 				username, null, authorities);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		log.debug("JWT token validated successfully for request: {}", requestURI);
 		filterChain.doFilter(request, response);
 	}
-} 
+
+}
