@@ -6,11 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
 
+import feign.FeignException;
+
 import com.medilabo.prevendia.frontend.client.NotesClient;
 import com.medilabo.prevendia.frontend.client.PatientsClient;
 import com.medilabo.prevendia.frontend.client.RiskClient;
 import com.medilabo.prevendia.frontend.dto.NoteDTO;
 import com.medilabo.prevendia.frontend.dto.PatientProfileDTO;
+import com.medilabo.prevendia.frontend.exception.ResourceNotFoundException;
+import com.medilabo.prevendia.frontend.exception.ServiceUnavailableException;
 
 @Service
 @RequiredArgsConstructor
@@ -45,5 +49,5 @@ public class NotesService {
 
 		return new PatientFullProfileDTO(patient, notes, risk);
 	}
-	
+
 }

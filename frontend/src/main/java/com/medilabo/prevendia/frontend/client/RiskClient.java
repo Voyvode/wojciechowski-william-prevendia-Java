@@ -10,7 +10,7 @@ import jakarta.validation.Valid;
 @FeignClient(name = "riskClient", url = "http://secured-gateway:8080")
 public interface RiskClient {
 
-	@PostMapping("/api/risk/")
+	@PostMapping("/api/risk")
 	RiskDTO assessRisk(@Valid PatientProfileDTO profile);
 
 }

@@ -97,7 +97,7 @@ function submitNewNote(event, patientId) {
 		if (!response.ok) {
 			// Essayer de récupérer le corps de la réponse pour plus de détails
 			return response.text().then(text => {
-				throw new Error(`Erreur HTTP: ${response.status}. Détails: ${text}`);
+				throw new Error(`Erreur HTTP : ${response.status}. Détails : ${text}`);
 			});
 		}
 		return response.text();

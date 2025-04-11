@@ -17,7 +17,6 @@ public class TriggersConfig {
 	@Bean
 	public List<String> triggerList() throws IOException {
 		ClassPathResource resource = new ClassPathResource("/triggers.txt");
-		System.out.println(resource);
 		return resource.getContentAsString(UTF_8)
 				.lines()
 				.map(this::normalizeTrigger)

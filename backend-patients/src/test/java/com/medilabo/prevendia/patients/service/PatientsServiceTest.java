@@ -1,21 +1,21 @@
-package com.medilabo.prevendia.patients;
+package com.medilabo.prevendia.patients.service;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import com.medilabo.prevendia.patients.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.medilabo.prevendia.patients.exception.ResourceNotFoundException;
 import com.medilabo.prevendia.patients.model.Patient;
 import com.medilabo.prevendia.patients.repository.PatientsRepository;
-import com.medilabo.prevendia.patients.service.PatientsService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -147,6 +147,22 @@ class PatientsServiceTest {
 
 		assertThrows(ResourceNotFoundException.class, () -> patientsService.deletePatient(id));
 		verify(patientsRepository, never()).delete(any());
+	}
+
+	@Test
+	void deletePatient_Success() {
+		var id = 1L;
+		var patient = new Patient();
+		patient.setId(id);
+		patient.setFirstname("Jean");
+		patient.setLastname("Dupont");
+		
+		when(patientsRepository.findById(id)).thenReturn(Optional.of(patient));
+		
+		patientsService.deletePatient(id);
+		
+		verify(patientsRepository, times(1)).findById(id);
+		verify(patientsRepository, times(1)).delete(patient);
 	}
 
 }
