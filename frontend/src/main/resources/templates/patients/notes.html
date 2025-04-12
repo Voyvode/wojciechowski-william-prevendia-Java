@@ -14,21 +14,20 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="patientNotesModalTitle">
-                    <span th:text="|${patient.firstname} ${patient.lastname}|"></span><br>
-                    <span class="small text-muted" th:text="|Notes de suivis|"></span>
+                <h5 class="modal-title" id="patientNotesModalTitle">
+                    <span th:text="|${patient.firstname} ${patient.lastname.toUpperCase()}|"></span>
+                    <span class="small text-muted"> — Notes de suivi</span>
                 </h5>
-                <div class="text-center">
-                    <span class="small text-muted">Risque de diabète</span><br>
-                    <div class="d-inline-block mt-1" th:switch="${risk.assessment}">
-                        <span th:case="'None'" class="badge bg-success" title="Aucun risque" th:text="${risk.assessment}">None</span>
-                        <span th:case="'Borderline'" class="badge bg-warning" title="Risque limite" th:text="${risk.assessment}">Borderline</span>
-                        <span th:case="'In danger'" class="badge bg-orange" style="background-color: #ff9800;" title="En danger" th:text="${risk.assessment}">In danger</span>
-                        <span th:case="'Early onset'" class="badge bg-danger" title="Début précoce" th:text="${risk.assessment}">Early onset</span>
-                        <span th:case="*" class="badge bg-secondary" th:text="${risk.assessment}">Unknown</span>
-                    </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="risk-assessment-bar p-2 text-center" style="border-bottom: 1px solid #e9ecef;">
+                <span class="small text-muted">Risque de diabète :</span>
+                <div class="d-inline-block ms-2">
+                    <span th:if="${risk.assessment == 'Aucun'}" class="badge bg-success" title="Aucun risque">Aucun</span>
+                    <span th:if="${risk.assessment == 'Limité'}" class="badge bg-warning" title="Risque limite">Limité</span>
+                    <span th:if="${risk.assessment == 'Danger'}" class="badge" style="background-color: #ff9800;" title="En danger">Danger</span>
+                    <span th:if="${risk.assessment == 'Maladie déclarée'}" class="badge bg-danger" title="Début précoce">Maladie déclarée</span>
                 </div>
-                <button type="button" class="btn-close p1" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
 

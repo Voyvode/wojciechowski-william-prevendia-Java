@@ -1,5 +1,6 @@
 package com.medilabo.prevendia.frontend.service;
 
+import java.util.Comparator;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,9 @@ public class PatientsService {
 	}
 
 	public List<PatientDTO> getPatients() {
-		return patientsClient.getPatients();
+		List<PatientDTO> patients = patientsClient.getPatients();
+		patients.sort(Comparator.comparing(PatientDTO::getLastname));
+		return patients;
 	}
 
 	public PatientDTO getPatient(Long patientId) {
